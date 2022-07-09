@@ -1,0 +1,78 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:RendererUI.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="RendererUI.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="RendererUI"
+        SizeToContent="WidthAndHeight">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="2*,Auto"
+          RowDefinitions="Auto,Auto,Auto,Auto"
+          Margin="10">
+        <TextBox Grid.Column="0"
+                 Grid.Row="0"
+                 Margin="10"
+                 VerticalAlignment="Center"
+                 Watermark="File to render"
+                 Text="{Binding FileToRender}"/>
+        <Button Grid.Column="1"
+                Grid.Row="0"
+                Margin="10"
+                HorizontalAlignment="Stretch"
+                Content="Browse File to Render"
+                HorizontalContentAlignment="Center"
+                Command="{Binding BrowseForFileAsync}"/>
+        
+        <TextBox Grid.Column="0"
+                 Grid.Row="1"
+                 Margin="10"
+                 VerticalAlignment="Center"
+                 Watermark="Output location"
+                 Text="{Binding OutputPath}"/>
+        <Button Grid.Column="1"
+                Grid.Row="1"
+                Margin="10"
+                HorizontalAlignment="Stretch"
+                Content="Browse Output Folder"
+                HorizontalContentAlignment="Center"
+                Command="{Binding BrowseForOutputPathAsync}"/>
+        
+        <StackPanel Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="2"
+                    Margin="10"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"
+                    Orientation="Horizontal"
+                    Spacing="10">
+            <ComboBox Items="{Binding FFTWindows}"
+                      SelectedItem="{Binding SelectedFFTWindow}"/>
+            <CheckBox IsChecked="{Binding UseFFTPositions}"
+                      Content="Use FFT Positions"/>
+            <CheckBox IsChecked="{Binding UseImaginaryFFTValues}"
+                      Content="Use Imaginary FFT Values"/>
+        </StackPanel>
+        
+        <TextBlock Grid.Column="0"
+                   Grid.Row="3"
+                   Margin="10"
+                   VerticalAlignment="Center" 
+                   Text="{Binding OutputText, StringFormat=Output: {0}}"/>
+        <Button Grid.Column="1"
+                Grid.Row="3"
+                Margin="10"
+                HorizontalAlignment="Stretch"
+                Content="Render"
+                HorizontalContentAlignment="Center"
+                Command="{Binding RenderSongAsync}"/>
+        
+    </Grid>
+    
+</Window>

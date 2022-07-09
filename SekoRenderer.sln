@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SekoRenderer", "SekoRenderer\SekoRenderer.csproj", "{6EB9DDD4-5900-415A-B670-2B86ED9792EA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RendererUI", "RendererUI\RendererUI.csproj", "{941C035A-E761-48C0-96FB-C53CE5B39399}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6EB9DDD4-5900-415A-B670-2B86ED9792EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EB9DDD4-5900-415A-B670-2B86ED9792EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EB9DDD4-5900-415A-B670-2B86ED9792EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EB9DDD4-5900-415A-B670-2B86ED9792EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{941C035A-E761-48C0-96FB-C53CE5B39399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{941C035A-E761-48C0-96FB-C53CE5B39399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{941C035A-E761-48C0-96FB-C53CE5B39399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{941C035A-E761-48C0-96FB-C53CE5B39399}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
