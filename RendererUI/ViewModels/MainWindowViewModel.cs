@@ -113,7 +113,7 @@ namespace RendererUI.ViewModels
             var methods = type.GetMethods(BindingFlags.Static | BindingFlags.Public);
             var selectedMethod = methods.First(x => x.Name == SelectedFFTWindow);
             //assign selected method to renderer
-            _renderer.FFTWindow = selectedMethod.CreateDelegate(typeof(Renderer._fftWindow)) as Renderer._fftWindow;
+            _renderer.FFTWindow = selectedMethod.CreateDelegate(typeof(Renderer._fftWindow)) as Renderer._fftWindow ?? throw new InvalidOperationException();
             
             var outputHash = _renderer.Md5HashFile(FileToRender);
             var sums = _renderer.DecodeSongSums(FileToRender);
