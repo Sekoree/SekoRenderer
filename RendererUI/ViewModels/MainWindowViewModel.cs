@@ -34,7 +34,25 @@ namespace RendererUI.ViewModels
             get => _renderer.UseImaginaryFFTValues;
             set
             {
+                if (value)
+                {
+                    UseImaginaryAndRealAverage = false;
+                }
                 _renderer.UseImaginaryFFTValues = value;
+                this.RaisePropertyChanged();
+            }
+        }
+        
+        public bool UseImaginaryAndRealAverage
+        {
+            get => _renderer.UseImaginaryAndRealAverage;
+            set
+            {
+                if (value)
+                {
+                    UseImaginaryFFTValues = false;
+                }
+                _renderer.UseImaginaryAndRealAverage = value;
                 this.RaisePropertyChanged();
             }
         }

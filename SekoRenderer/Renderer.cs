@@ -10,22 +10,29 @@ public class Renderer
 {
     public bool UseFFTPositions { get; set; }
     public bool UseImaginaryFFTValues { get; set; }
+    public bool UseImaginaryAndRealAverage { get; set; }
 
     public delegate double _fftWindow(int n, int frameSize);
     public _fftWindow FFTWindow { get; set; }
 
-    public Renderer()
+    private int _fftResolution;
+
+    public Renderer(int fftResolution = 512)
     {
         UseFFTPositions = true;
         UseImaginaryFFTValues = true;
+        UseImaginaryAndRealAverage = false;
         FFTWindow = FastFourierTransform.HannWindow;
+        _fftResolution = fftResolution;
     }
 
-    public Renderer(ref _fftWindow fftWindow, bool useFFTPositions = true, bool useImaginaryFFTValues = true)
+    public Renderer(ref _fftWindow fftWindow, bool useFFTPositions = true, bool useImaginaryFFTValues = true, bool useImaginaryAndRealAverage = false, int fftResolution = 512)
     {
         UseFFTPositions = useFFTPositions;
         UseImaginaryFFTValues = useImaginaryFFTValues;
+        UseImaginaryAndRealAverage = useImaginaryAndRealAverage;
         FFTWindow = fftWindow;
+        _fftResolution = fftResolution;
     }
     
     public string Md5HashFile(string fileName)
@@ -69,7 +76,7 @@ public class Renderer
         }
 
         sbyte[]? shape = null;
-        int numShapeNodes = 256;
+        int numShapeNodes = _fftResolution / 2;
         Console.WriteLine("Creating shape");
         if (fileStream != null)
         {
@@ -111,7 +118,7 @@ public class Renderer
     
     public List<float> DecodeSongSums(string path)
     {
-        var fft = new float[512];
+        var fft = new float[_fftResolution];
         
         var could = Bass.Init();
         Console.WriteLine("Bass.Init returned " + could);
@@ -138,19 +145,35 @@ public class Renderer
     private float FastDecodeStepAsync(int chan, float[] ffts)
     {
         int fftPos = 0;
-        var data = Bass.ChannelGetData(chan, ffts, (int)DataFlags.FFT1024);
+        var defaultData = DataFlags.FFT1024;
+        if (_fftResolution == 128)
+            defaultData = DataFlags.FFT256;
+        else if (_fftResolution == 256)
+            defaultData = DataFlags.FFT512;
+        else if (_fftResolution == 1024)
+            defaultData = DataFlags.FFT2048;
+        else if (_fftResolution == 2048)
+            defaultData = DataFlags.FFT4096;
+        else if (_fftResolution == 4096)
+            defaultData = DataFlags.FFT8192;
+        else if (_fftResolution == 8192)
+            defaultData = DataFlags.FFT16384;
+        else if (_fftResolution == 16384)
+            defaultData = DataFlags.FFT32768;
+        
+        var data = Bass.ChannelGetData(chan, ffts, (int)defaultData);
 
         var complexFFTs = new Complex[ffts.Length];
         for (int i = 0; i < ffts.Length; i++)
         {
-            complexFFTs[i] = new Complex(ffts[i] * FFTWindow.Invoke(fftPos, 512), 0);
+            complexFFTs[i] = new Complex(ffts[i] * FFTWindow.Invoke(fftPos, _fftResolution), 0);
             if (UseFFTPositions)
             {
                 fftPos++;   
             }
         }
         
-        FastFourierTransform.FFT(false, (int)Math.Log(512, 2.0), ref complexFFTs);
+        FastFourierTransform.FFT(false, (int)Math.Log(_fftResolution, 2.0), ref complexFFTs);
         
         int fFT512KISS = data;
         if (fFT512KISS < 1)
@@ -159,9 +182,14 @@ public class Renderer
         }
 
         float num = 0f;
-        for (int i = 1; i < 512; i++)
+        for (int i = 1; i < _fftResolution; i++)
         {
-            if (UseImaginaryFFTValues)
+            if (UseImaginaryAndRealAverage)
+            {
+                var avg = (complexFFTs[i].Real + complexFFTs[i].Imaginary) / 2;
+                num += (float)Math.Sqrt(Math.Max(0f, avg));
+            }
+            else if (UseImaginaryFFTValues)
             {
                 num += (float)Math.Sqrt(Math.Max(0f, complexFFTs[i].Imaginary));
             }
