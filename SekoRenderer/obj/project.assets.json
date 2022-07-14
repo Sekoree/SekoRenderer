@@ -11,17 +11,6 @@
           "lib/netstandard1.4/ManagedBass.dll": {}
         }
       }
-    },
-    "net6.0/win-x64": {
-      "ManagedBass/3.1.1": {
-        "type": "package",
-        "compile": {
-          "lib/netstandard1.4/ManagedBass.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard1.4/ManagedBass.dll": {}
-        }
-      }
     }
   },
   "libraries": {
@@ -71,8 +60,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet-experimental/nuget/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net6.0": {
@@ -110,12 +98,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "c:\\program files\\dotnet\\sdk\\6.0.203\\RuntimeIdentifierGraph.json"
-      }
-    },
-    "runtimes": {
-      "win-x64": {
-        "#import": []
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.302\\RuntimeIdentifierGraph.json"
       }
     }
   }
