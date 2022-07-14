@@ -70,6 +70,14 @@
                       Content="Use Imaginary FFTs"/>
             <CheckBox IsChecked="{Binding UseFFTPositions}"
                       Content="Use FFT Positions"/>
+            
+            <TextBlock IsVisible="{Binding ShowDoneText}"
+                       VerticalAlignment="Center"
+                       FontWeight="ExtraBold"
+                       FontSize="20"
+                       Background="#66FF66"
+                       Foreground="Black"
+                       Text="Done!" />
         </StackPanel>
         
         <TextBlock Grid.Column="0"

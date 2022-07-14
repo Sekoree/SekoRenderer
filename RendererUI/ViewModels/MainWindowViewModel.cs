@@ -61,9 +61,12 @@ namespace RendererUI.ViewModels
         [Reactive] public string SelectedFFTWindow { get; set; }
         
         [Reactive] public string OutputPath { get; set; } = Directory.GetCurrentDirectory();
-        [Reactive] public string FileToRender { get; set; }
+        [Reactive] public string FileToRender { get; set; } = string.Empty;
 
-        [Reactive] public string OutputText { get; set; }
+        [Reactive] public string OutputText { get; set; } = string.Empty;
+
+        [Reactive] public bool ShowDoneText { get; set; } = false;
+        
         public MainWindowViewModel()
         {
             var type = typeof(FastFourierTransform);
@@ -120,8 +123,9 @@ namespace RendererUI.ViewModels
             }
         }
 
-        public async Task RenderSongAsync()
+        public void RenderSongAsync()
         {
+            ShowDoneText = false;
             if (!File.Exists(FileToRender) || !Directory.Exists(OutputPath))
             {
                 OutputText = "Invalid file or output path";
@@ -137,6 +141,7 @@ namespace RendererUI.ViewModels
             var sums = _renderer.DecodeSongSums(FileToRender);
             _renderer.WriteAshFile(FileToRender, OutputPath, sums);
             OutputText = outputHash;
+            ShowDoneText = true;
         } 
     }
 }
