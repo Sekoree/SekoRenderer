@@ -56,6 +56,8 @@
                       SelectedItem="{Binding SelectedFFTWindow}"/>
             <CheckBox IsChecked="{Binding UseImaginaryAndRealAverage}"
                       Content="Use Real + Imaginary FFT Average"/>
+            <CheckBox IsChecked="{Binding UsePleaseHelpMe}"
+                      Content="PleaseGodI'mHavingABreakdown"/>
         </StackPanel>
         
         <StackPanel Grid.Column="0"
@@ -71,7 +73,7 @@
             <CheckBox IsChecked="{Binding UseFFTPositions}"
                       Content="Use FFT Positions"/>
             
-            <TextBlock IsVisible="{Binding ShowDoneText}"
+            <TextBlock IsVisible="{Binding ShowDoneText, Mode=TwoWay}"
                        VerticalAlignment="Center"
                        FontWeight="ExtraBold"
                        FontSize="20"

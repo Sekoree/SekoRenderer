@@ -14,6 +14,7 @@ public class Renderer
     public bool UseFFTPositions { get; set; }
     public bool UseImaginaryFFTValues { get; set; }
     public bool UseImaginaryAndRealAverage { get; set; }
+    public bool UsePleaseHelpMe { get; set; } = false;
 
     public delegate double _fftWindow(int n, int frameSize);
     public _fftWindow FFTWindow { get; set; }
@@ -27,6 +28,8 @@ public class Renderer
         UseImaginaryAndRealAverage = false;
         FFTWindow = FastFourierTransform.HannWindow;
         _fftResolution = fftResolution;
+        var could = Bass.Init();
+        Console.WriteLine("Bass.Init returned " + could);
     }
 
     public Renderer(ref _fftWindow fftWindow, bool useFFTPositions = true, bool useImaginaryFFTValues = true, bool useImaginaryAndRealAverage = false, int fftResolution = 512)
@@ -36,6 +39,8 @@ public class Renderer
         UseImaginaryAndRealAverage = useImaginaryAndRealAverage;
         FFTWindow = fftWindow;
         _fftResolution = fftResolution;
+        var could = Bass.Init();
+        Console.WriteLine("Bass.Init returned " + could);
     }
     
     public string Md5HashFile(string fileName)
@@ -123,8 +128,6 @@ public class Renderer
     {
         var fft = new float[_fftResolution];
         
-        var could = Bass.Init();
-        Console.WriteLine("Bass.Init returned " + could);
         var chan = Bass.CreateStream(path, Flags: BassFlags.Decode | BassFlags.Float | BassFlags.Prescan);
         
         Console.WriteLine("Prescan2 complete");
@@ -178,6 +181,34 @@ public class Renderer
         
         FastFourierTransform.FFT(false, (int)Math.Log(_fftResolution, 2.0), ref complexFFTs);
         
+        
+        if (UsePleaseHelpMe)
+        {
+            //get avg of real and imaginary parts
+            //var avg = (ulong)complexFFTs[i];
+            var the3CThing = new Complex();
+            complexFFTs[0] = new Complex(0, 0);
+            complexFFTs[1] = new Complex(0, 0);
+            for (var i = 0; i < complexFFTs.Length; i++)
+            {
+                var current = complexFFTs[i];
+                var next = new Complex();
+                if (i + 1 < complexFFTs.Length)
+                {
+                    next = complexFFTs[i + 1];
+                }
+
+                var sqrt = Complex.Sqrt(current * current + next * next) * 0.0009765625f;
+                complexFFTs[i] = sqrt;
+                
+                if (sqrt.Real <= the3CThing.Real)
+                {
+                    sqrt = the3CThing;
+                }
+                the3CThing = sqrt;
+            }
+        }
+        
         int fFT512KISS = data;
         if (fFT512KISS < 1)
         {
@@ -192,7 +223,7 @@ public class Renderer
                 var avg = (complexFFTs[i].Real + complexFFTs[i].Imaginary) / 2;
                 num += (float)Math.Sqrt(Math.Max(0f, avg));
             }
-            else if (UseImaginaryFFTValues)
+            else if (UseImaginaryFFTValues && !UsePleaseHelpMe)
             {
                 num += (float)Math.Sqrt(Math.Max(0f, complexFFTs[i].Imaginary));
             }

@@ -56,6 +56,16 @@ namespace RendererUI.ViewModels
                 this.RaisePropertyChanged();
             }
         }
+        
+        public bool UsePleaseHelpMe
+        {
+            get => _renderer.UsePleaseHelpMe;
+            set
+            {
+                _renderer.UsePleaseHelpMe = value;
+                this.RaisePropertyChanged();
+            }
+        }
 
         [Reactive] public ObservableCollection<string> FFTWindows { get; set; } = new();
         [Reactive] public string SelectedFFTWindow { get; set; }
@@ -123,9 +133,10 @@ namespace RendererUI.ViewModels
             }
         }
 
-        public void RenderSongAsync()
+        public async Task RenderSongAsync()
         {
             ShowDoneText = false;
+            await Task.Delay(1000);
             if (!File.Exists(FileToRender) || !Directory.Exists(OutputPath))
             {
                 OutputText = "Invalid file or output path";
