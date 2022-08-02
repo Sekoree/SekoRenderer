@@ -15,6 +15,7 @@ public class Renderer
     public bool UseImaginaryFFTValues { get; set; }
     public bool UseImaginaryAndRealAverage { get; set; }
     public bool UsePleaseHelpMe { get; set; } = false;
+    public bool UseRealPlusImaginaryAddition { get; set; } = false;
 
     public delegate double _fftWindow(int n, int frameSize);
     public _fftWindow FFTWindow { get; set; }
@@ -29,6 +30,8 @@ public class Renderer
         FFTWindow = FastFourierTransform.HannWindow;
         _fftResolution = fftResolution;
         var could = Bass.Init();
+        var pl = Bass.PluginLoad("bassflac.dll");
+        var err = Bass.LastError;
         Console.WriteLine("Bass.Init returned " + could);
     }
 
@@ -39,6 +42,7 @@ public class Renderer
         UseImaginaryAndRealAverage = useImaginaryAndRealAverage;
         FFTWindow = fftWindow;
         _fftResolution = fftResolution;
+        var pl = Bass.PluginLoad("bassflac.dll");
         var could = Bass.Init();
         Console.WriteLine("Bass.Init returned " + could);
     }
@@ -89,6 +93,7 @@ public class Renderer
         if (fileStream != null)
         {
             BinaryWriter binaryWriter = new BinaryWriter(fileStream);
+            binaryWriter.BaseStream.Position = 0L;
             if (shape == null)
             {
                 shape = new sbyte[numShapeNodes];
@@ -148,7 +153,7 @@ public class Renderer
         return decodeSums;
     }
     
-    private float FastDecodeStepAsync(int chan, float[] ffts)
+    private float FastDecodeStepAsync(int chan, float[] ffts, bool direct = true)
     {
         int fftPos = 0;
         var defaultData = DataFlags.FFT1024;
@@ -167,7 +172,29 @@ public class Renderer
         else if (_fftResolution == 16384)
             defaultData = DataFlags.FFT32768;
         
-        var data = Bass.ChannelGetData(chan, ffts, (int)defaultData);
+        var data = Bass.ChannelGetData(chan, ffts, (int)(defaultData | DataFlags.Float));
+
+        if (direct)
+        {
+            if (data < 1)
+            {
+                return -1f;
+            }
+            
+            for (int i = 0; i < ffts.Length; i++)
+            {
+                //Dylan moment idk
+                ffts[i] /= 4;
+            }
+            
+            float numEnd = 0f;
+            for (int i = 1; i < _fftResolution; i++)
+            {
+                numEnd += (float)Math.Sqrt(Math.Max(0f, ffts[i]));
+            }
+
+            return Math.Max(0f, numEnd);
+        }
 
         var complexFFTs = new Complex[ffts.Length];
         for (int i = 0; i < ffts.Length; i++)
@@ -201,7 +228,7 @@ public class Renderer
                 var sqrt = Complex.Sqrt(current * current + next * next) * 0.0009765625f;
                 complexFFTs[i] = sqrt;
                 
-                if (sqrt.Real <= the3CThing.Real)
+                if (sqrt.Real + sqrt.Imaginary <= the3CThing.Real + the3CThing.Imaginary)
                 {
                     sqrt = the3CThing;
                 }
@@ -223,9 +250,13 @@ public class Renderer
                 var avg = (complexFFTs[i].Real + complexFFTs[i].Imaginary) / 2;
                 num += (float)Math.Sqrt(Math.Max(0f, avg));
             }
-            else if (UseImaginaryFFTValues && !UsePleaseHelpMe)
+            else if (UseImaginaryFFTValues)
             {
                 num += (float)Math.Sqrt(Math.Max(0f, complexFFTs[i].Imaginary));
+            }
+            else if (UseRealPlusImaginaryAddition)
+            {
+                num += (float)Math.Sqrt(Math.Max(0f, complexFFTs[i].Real + complexFFTs[i].Imaginary));
             }
             else
             {

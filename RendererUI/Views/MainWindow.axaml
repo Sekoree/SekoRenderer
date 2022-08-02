@@ -3,6 +3,7 @@
         xmlns:vm="using:RendererUI.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonia="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="RendererUI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
@@ -14,7 +15,7 @@
     </Design.DataContext>
 
     <Grid ColumnDefinitions="2*,Auto"
-          RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+          RowDefinitions="Auto,Auto,Auto,Auto,Auto,*"
           Margin="10">
         <TextBox Grid.Column="0"
                  Grid.Row="0"
@@ -70,6 +71,8 @@
                     Spacing="10">
             <CheckBox IsChecked="{Binding UseImaginaryFFTValues}"
                       Content="Use Imaginary FFTs"/>
+            <CheckBox IsChecked="{Binding UseRealPlusImaginaryAddition}"
+                      Content="Sum up Real + Imaginary Values"/>
             <CheckBox IsChecked="{Binding UseFFTPositions}"
                       Content="Use FFT Positions"/>
             
@@ -94,6 +97,11 @@
                 Content="Render"
                 HorizontalContentAlignment="Center"
                 Command="{Binding RenderSongAsync}"/>
+        
+        <ContentPresenter Grid.Column="0"
+                          Grid.ColumnSpan="2"
+                          Grid.Row="5"
+                          Content="{Binding AvaPlot}"/>
         
     </Grid>
     

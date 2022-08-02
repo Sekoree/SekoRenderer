@@ -3,6 +3,8 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="RenderGraph/App.axaml" value="RenderGraph/RenderGraph.csproj" />
+        <entry key="RenderGraph/Views/MainWindow.axaml" value="RenderGraph/RenderGraph.csproj" />
         <entry key="RendererUI/App.axaml" value="RendererUI/RendererUI.csproj" />
         <entry key="RendererUI/Views/MainWindow.axaml" value="RendererUI/RendererUI.csproj" />
       </map>
